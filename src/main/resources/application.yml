@@ -7,7 +7,7 @@ spring:
   datasource:
     username: postgres
     password: rootservgeevich
-    url: jdbc:postgresql://localhost:5432/restservice
+    url: jdbc:postgresql://localhost:5432/carservice
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
