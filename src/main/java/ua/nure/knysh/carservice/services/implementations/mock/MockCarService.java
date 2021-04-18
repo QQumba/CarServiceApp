@@ -57,4 +57,19 @@ public class MockCarService implements CarService {
         cars.remove(id);
         return true;
     }
+
+    @Override
+    public List<Car> getFactoryCars(Long factoryId) {
+        return null;
+    }
+
+    @Override
+    public List<Car> getPersonCars(Long personId) {
+        return null;
+    }
+
+    @Override
+    public void addFactory(Long carId, Long factoryId) {
+
+    }
 }
