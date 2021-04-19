@@ -10,7 +10,7 @@ import ua.nure.knysh.carservice.services.FactoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/factory")
+@RequestMapping("api/factory")
 public class FactoryController {
     private final FactoryService factoryService;
 

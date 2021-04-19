@@ -37,7 +37,7 @@ public class Car {
     private Person person;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "car_factory",
             joinColumns = @JoinColumn(name = "car_id",
                     referencedColumnName = "id"),
@@ -50,5 +50,10 @@ public class Car {
             return this.person.getId();
         }
         return null;
+    }
+
+    @PreRemove
+    private void preRemove(){
+        factories.forEach(factory -> factory.getCars().remove(this));
     }
 }

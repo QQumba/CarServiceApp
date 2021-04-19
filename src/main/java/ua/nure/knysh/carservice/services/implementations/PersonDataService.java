@@ -42,7 +42,7 @@ public class PersonDataService implements PersonService {
         if(car.isEmpty() || person.isEmpty()){
             throw new IllegalArgumentException("Car or person with specified id does not exist.");
         }
-        if(car.get().getPersonId().equals(personId)){
+        if(car.get().getPersonId() != null && car.get().getPersonId().equals(personId)){
             throw new IllegalArgumentException();
         }
 
