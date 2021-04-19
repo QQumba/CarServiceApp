@@ -10,7 +10,7 @@ import ua.nure.knysh.carservice.services.CarService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/car")
+@RequestMapping("api/car")
 public class CarController {
     private static final String INFO_RESPONSE_MESSAGE = "Mykyta Knysh PZPI-18-8, My First Spring Application. 2021 &copy";
 

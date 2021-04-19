@@ -12,7 +12,7 @@ import javax.persistence.NamedAttributeNode;
 import java.util.List;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("api/person")
 public class PersonController {
     private final PersonService personService;
 

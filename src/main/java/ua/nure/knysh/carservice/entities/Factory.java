@@ -24,6 +24,11 @@ public class Factory{
     private String location;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "factories", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "factories")
     private List<Car> cars;
+
+    @PreRemove
+    private void preRemove(){
+        cars.forEach(car -> car.getFactories().remove(this));
+    }
 }
