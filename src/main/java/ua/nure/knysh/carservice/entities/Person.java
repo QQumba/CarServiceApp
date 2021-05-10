@@ -20,6 +20,7 @@ public class Person{
     @Column(nullable = false)
     private String name;
 
+    @Column(unique = true)
     private String email;
 
     @JsonIgnore

@@ -3,8 +3,10 @@ package ua.nure.knysh.carservice.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.nure.knysh.carservice.contract.CarDto;
 import ua.nure.knysh.carservice.contract.CarFactory;
 import ua.nure.knysh.carservice.entities.Car;
+import ua.nure.knysh.carservice.mappers.CarMapper;
 import ua.nure.knysh.carservice.services.CarService;
 
 import java.util.List;
@@ -15,9 +17,11 @@ public class CarController {
     private static final String INFO_RESPONSE_MESSAGE = "Mykyta Knysh PZPI-18-8, My First Spring Application. 2021 &copy";
 
     private final CarService carService;
+    private final CarMapper mapper;
 
-    public CarController(CarService carService) {
+    public CarController(CarService carService, CarMapper mapper) {
         this.carService = carService;
+        this.mapper = mapper;
     }
 
     @GetMapping
@@ -26,28 +30,29 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Car> getCar(@PathVariable("id") Long id){
+    public ResponseEntity<CarDto> getCar(@PathVariable("id") Long id){
         return ResponseEntity.of(carService.get(id));
     }
 
     @GetMapping("/all")
-    public List<Car> getAllCars(){
+    public List<CarDto> getAllCars(){
         return carService.getAll();
     }
 
     @GetMapping("/factory/{id}")
-    public List<Car> getFactoryCars(@PathVariable("id") Long factoryId){
+    public List<CarDto> getFactoryCars(@PathVariable("id") Long factoryId){
         return carService.getFactoryCars(factoryId);
     }
 
     @GetMapping("/person/{id}")
-    public List<Car> getPersonCars(@PathVariable("id") Long personId){
+    public List<CarDto> getPersonCars(@PathVariable("id") Long personId){
         return carService.getPersonCars(personId);
     }
 
     @PostMapping
-    public ResponseEntity<Long> createCar(@RequestBody Car car){
-        return ResponseEntity.of(carService.create(car));
+    public ResponseEntity<Long> createCar(@RequestBody CarDto carDto){
+        System.out.println("carDto: personId: " + carDto.getPersonId());
+        return ResponseEntity.of(carService.create(carDto));
     }
 
     @PostMapping("/add-factory")
@@ -56,8 +61,8 @@ public class CarController {
     }
 
     @PutMapping
-    public ResponseEntity updateCar(@RequestBody Car car){
-        if(carService.update(car)){
+    public ResponseEntity updateCar(@RequestBody CarDto carDto){
+        if(carService.update(carDto)){
             return new ResponseEntity(HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);

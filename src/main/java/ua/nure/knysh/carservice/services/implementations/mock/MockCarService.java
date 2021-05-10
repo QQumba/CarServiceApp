@@ -2,6 +2,7 @@ package ua.nure.knysh.carservice.services.implementations.mock;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import ua.nure.knysh.carservice.contract.CarDto;
 import ua.nure.knysh.carservice.entities.Car;
 import ua.nure.knysh.carservice.services.CarService;
 
@@ -14,12 +15,12 @@ import java.util.concurrent.ConcurrentMap;
 @Service
 @Scope("singleton")
 public class MockCarService implements CarService {
-    private final ConcurrentMap<Long, Car> cars = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Long, CarDto> cars = new ConcurrentHashMap<>();
     private Long currentId = 0L;
 
     @Override
-    public Optional<Car> get(Long id) {
-        Car car = cars.get(id);
+    public Optional<CarDto> get(Long id) {
+        var car = cars.get(id);
         if(car == null){
             return Optional.empty();
         }
@@ -27,24 +28,24 @@ public class MockCarService implements CarService {
     }
 
     @Override
-    public List<Car> getAll() {
+    public List<CarDto> getAll() {
         return new ArrayList<>(cars.values());
     }
 
     @Override
-    public Optional<Long> create(Car car) {
-        car.setId(++currentId);
-        cars.put(car.getId(), car);
-        return Optional.of(car.getId());
+    public Optional<Long> create(CarDto carDto) {
+        carDto.setId(++currentId);
+        cars.put(carDto.getId(), carDto);
+        return Optional.of(carDto.getId());
     }
 
     @Override
-    public boolean update(Car car) {
-        if(!cars.containsKey(car.getId())){
+    public boolean update(CarDto carDto) {
+        if(!cars.containsKey(carDto.getId())){
             return false;
         }
 
-        cars.replace(car.getId(), car);
+        cars.replace(carDto.getId(), carDto);
         return true;
     }
 
@@ -59,12 +60,12 @@ public class MockCarService implements CarService {
     }
 
     @Override
-    public List<Car> getFactoryCars(Long factoryId) {
+    public List<CarDto> getFactoryCars(Long factoryId) {
         return null;
     }
 
     @Override
-    public List<Car> getPersonCars(Long personId) {
+    public List<CarDto> getPersonCars(Long personId) {
         return null;
     }
 

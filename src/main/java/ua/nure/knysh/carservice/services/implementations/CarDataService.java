@@ -3,9 +3,11 @@ package ua.nure.knysh.carservice.services.implementations;
 import com.sun.istack.NotNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ua.nure.knysh.carservice.contract.CarDto;
 import ua.nure.knysh.carservice.entities.Car;
 import ua.nure.knysh.carservice.entities.Factory;
 import ua.nure.knysh.carservice.entities.Person;
+import ua.nure.knysh.carservice.mappers.CarMapper;
 import ua.nure.knysh.carservice.repositories.CarRepository;
 import ua.nure.knysh.carservice.repositories.FactoryRepository;
 import ua.nure.knysh.carservice.repositories.PersonRepository;
@@ -14,6 +16,7 @@ import ua.nure.knysh.carservice.services.CarService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -22,49 +25,62 @@ public class CarDataService implements CarService {
     private final FactoryRepository factoryRepository;
     private final PersonRepository personRepository;
 
-    public CarDataService(CarRepository carRepository, FactoryRepository factoryRepository, PersonRepository personRepository) {
+    private final CarMapper mapper;
+
+    public CarDataService(CarRepository carRepository, FactoryRepository factoryRepository, PersonRepository personRepository, CarMapper mapper) {
         this.carRepository = carRepository;
         this.factoryRepository = factoryRepository;
         this.personRepository = personRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public Optional<Car> get(@NotNull Long id) {
+    public Optional<CarDto> get(@NotNull Long id) {
         Optional<Car> car = carRepository.findById(id);
         if(car.isEmpty()){
             return Optional.empty();
         }
-        return car;
+        return mapper.map(car);
     }
 
     @Override
-    public List<Car> getAll() {
-        return carRepository.findAll();
+    public List<CarDto> getAll() {
+        return carRepository.findAll().stream().map(mapper::map).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Long> create(@NotNull Car car) {
+    public Optional<Long> create(@NotNull CarDto carDto) {
+        if(carDto.getPersonId() == null){
+            System.out.println("car personId is null");
+            return Optional.empty();
+        }
+        Car car = mapper.map(carDto);
+        if(carDto.getPersonId() != null){
+            Optional<Person> person = personRepository.findById(carDto.getPersonId());
+            person.ifPresent(car::setPerson);
+        }
+
         return Optional.of(carRepository.save(car).getId());
     }
 
     @Override
-    public List<Car> getFactoryCars(Long factoryId) {
+    public List<CarDto> getFactoryCars(Long factoryId) {
         Optional<Factory> factory = factoryRepository.findById(factoryId);
         if(factory.isEmpty()){
             return new ArrayList<>();
         }
 
-        return factory.get().getCars();
+        return factory.get().getCars().stream().map(mapper::map).collect(Collectors.toList());
     }
 
     @Override
-    public List<Car> getPersonCars(Long personId) {
+    public List<CarDto> getPersonCars(Long personId) {
         Optional<Person> person = personRepository.findById(personId);
         if(person.isEmpty()){
             return new ArrayList<>();
         }
 
-        return person.get().getCars();
+        return person.get().getCars().stream().map(mapper::map).collect(Collectors.toList());
     }
 
     @Override
@@ -83,11 +99,19 @@ public class CarDataService implements CarService {
     }
 
     @Override
-    public boolean update(@NotNull Car car) {
-        Optional<Car> carEntity = carRepository.findById(car.getId());
+    public boolean update(@NotNull CarDto carDto) {
+        Optional<Car> carEntity = carRepository.findById(carDto.getId());
+        Person person = null;
+        if(carDto.getPersonId() != null){
+            var personOption = personRepository.findById(carDto.getPersonId());
+            if(personOption.isPresent()){
+                person = personOption.get();
+            }
+        }
         if(carEntity.isEmpty()){
             return false;
         }
+        var car = mapper.map(carDto).setPerson(person);
         carRepository.save(car);
         return true;
     }

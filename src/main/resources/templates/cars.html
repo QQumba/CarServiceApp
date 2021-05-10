@@ -3,31 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <link th:href="@{/css/content.css}" rel="stylesheet">
+    <link th:href="@{/css/sidebar.css}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/modal.js}"></script>
 </head>
 <body>
 
-<table class="table table-dark">
-    <thead>
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Model</th>
-        <th scope="col">Max speed</th>
-        <th scope="col">Auto transmission</th>
-        <th scope="col">Person id</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!--/*@thymesVar id="car" type="ua.nure.knysh.carservice.entities.Car"*/-->
-    <tr th:each="car: ${cars}">
-        <td th:text="${car.id}"></td>
-        <td th:text="${car.modelName}"></td>
-        <td th:text="${car.maxSpeed}"></td>
-        <td th:text="${car.hasAutomaticTransmission}"></td>
-        <td th:text="${car.personId}"></td>
-    </tr>
-    </tbody>
-</table>
+<div id="page-wrapper">
+    <div id="sidebar">
+        <div id="sidebar-top">
+            <a href="#">
+                <div id="logo" class="sidebar-item">
+                    REST service
+                </div>
+            </a>
+            <hr>
 
+            <div class="sidebar-item">
+                <div class="sidebar-item-inner">
+                    Cars
+                </div>
+            </div>
+
+            <div class="sidebar-item">
+                <div class="sidebar-item-inner">
+                    Persons
+                </div>
+            </div>
+
+            <div class="sidebar-item">
+                <div class="sidebar-item-inner">
+                    Factories
+                </div>
+            </div>
+
+            <hr>
+        </div>
+    </div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <span id="modal-close">&times;</span>
+            <div class="modal-content-inner">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">Model</th>
+                        <th scope="col">Max speed</th>
+                        <th scope="col">Auto transmission</th>
+                        <th scope="col">Person email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="input-row">
+                        <td><input type="text" id="edit_car_modelName"></td>
+                        <td><input type="text" id="edit_car_maxSpeed"></td>
+                        <td>
+                            <select id="edit_car_hasAutomaticTransmission">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="edit_car_personId">
+                                <option value="null"></option>
+                                <option th:each="person: ${persons}" th:value="${person.id}" th:text="${person.email}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button class="edit-button" th:onclick="updateCar()">Update</button>
+                <button class="edit-button" th:onclick="deleteCar()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="content-wrapper">
+        <div id="content">
+            <div class="content-header"><h1>Cars</h1></div>
+            <!--<table class="table table-dark">-->
+            <table id="data">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Model</th>
+                    <th scope="col">Max speed</th>
+                    <th scope="col">Auto transmission</th>
+                    <th scope="col">Person email</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <!--/*@thymesVar id="id" type="ua.nure.knysh.carservice.contract.CarDto"*/-->
+                <tr th:each="car: ${cars}" th:onclick="openCarModal([[${car}]])">
+                    <td th:text="${car.id}"></td>
+                    <td th:text="${car.modelName}"></td>
+                    <td th:text="${car.maxSpeed}"></td>
+                    <td th:text="${car.hasAutomaticTransmission}"></td>
+                    <td th:text="${car.personEmail}"></td>
+                </tr>
+                <tr class="input-row">
+                    <td><input type="submit" value="Add" th:onclick="createCar()"></td>
+                    <td><input type="text" id="car_modelName"></td>
+                    <td><input type="text" id="car_maxSpeed"></td>
+                    <td>
+                        <select id="car_hasAutomaticTransmission">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="car_personId">
+                            <option value="null"></option>
+                            <option th:each="person: ${persons}" th:value="${person.id}" th:text="${person.email}"></option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printCar(car) {
+        console.log('=============== car ===============');
+        console.log('id: ' + car.id);
+        console.log('modelName: ' + car.modelName);
+        console.log('maxSpeed: ' + car.maxSpeed);
+        console.log('hasAutomaticTransmission: ' + car.hasAutomaticTransmission);
+        console.log('personEmail: ' + car.personEmail);
+    }
+
+    function createCar(){
+        let mn = document.getElementById('car_modelName').value;
+        let ms = Number.parseInt(document.getElementById('car_maxSpeed').value);
+        let hat = document.getElementById('car_hasAutomaticTransmission').value;
+        let pi = Number.parseInt(document.getElementById('car_personId').value);
+        let car = {modelName:mn,maxSpeed:ms,hasAutomaticTransmission:hat,personId:pi};
+
+        console.log(car);
+
+        if(!car){
+            return;
+        }
+        if(!car.modelName || car.modelName === ""){
+            alert('car model can not be empty');
+            return;
+        }
+        if(!Number.isInteger(car.maxSpeed)){
+            alert('car speed is not a number');
+            return;
+        }
+
+        const url = "http://localhost:8081/api/car";
+        $.ajax({
+            url:url,
+            type:"POST",
+            data: JSON.stringify(car),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(){
+                alert('new car created');
+            }
+        })
+    }
+
+    let editableCar;
+
+    function updateCar(){
+        let mn = document.getElementById('edit_car_modelName').value;
+        let ms = Number.parseInt(document.getElementById('edit_car_maxSpeed').value);
+        let hat = document.getElementById('edit_car_hasAutomaticTransmission').value;
+        let pi = Number.parseInt(document.getElementById('edit_car_personId').value);
+        let car = {id:editableCar.id,modelName:mn,maxSpeed:ms,hasAutomaticTransmission:hat,personId:pi};
+
+        const url = "http://localhost:8081/api/car";
+        $.ajax({
+            url:url,
+            type:"PUT",
+            data: JSON.stringify(car),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(){
+                alert('car updated successfully');
+            }
+        })
+    }
+
+    function deleteCar(){
+        if(!confirm('Are you sure?')){
+            return;
+        }
+
+        const url = "http://localhost:8081/api/car/"+editableCar.id;
+        $.ajax({
+            url:url,
+            type:"DELETE",
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(){
+                alert('car deleted');
+            }
+        })
+    }
+
+    var modal = document.getElementById("modal");
+    var span = document.getElementById("modal-close");
+
+    function openCarModal(car) {
+        editableCar = car;
+        var modal_content = document.getElementsByClassName("modal-content")[0];
+
+        let mnEl = document.getElementById("edit_car_modelName");
+        let msEl = document.getElementById("edit_car_maxSpeed");
+        let atEl = document.getElementById("edit_car_hasAutomaticTransmission");
+        let piEl = document.getElementById("edit_car_personId");
+
+        mnEl.value = car.modelName;
+        msEl.value = car.maxSpeed;
+        atEl.value = car.hasAutomaticTransmission;
+        piEl.value = car.personId;
+
+        modal.style.display = "block";
+    }
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>

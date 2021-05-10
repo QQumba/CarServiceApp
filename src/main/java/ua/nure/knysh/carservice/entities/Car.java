@@ -1,7 +1,6 @@
 package ua.nure.knysh.carservice.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,6 +30,10 @@ public class Car {
     @Transient
     private Long personId;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Transient
+    private String personEmail;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "person_id")
@@ -50,6 +53,23 @@ public class Car {
             return this.person.getId();
         }
         return null;
+    }
+
+    public Car setPersonId(Long personId){
+        this.personId = personId;
+        return this;
+    }
+
+    public String getPersonEmail() {
+        if(person != null){
+            return this.person.getEmail();
+        }
+        return null;
+    }
+
+    public Car setPersonEmail(String personEmail){
+        this.personEmail = personEmail;
+        return this;
     }
 
     @PreRemove

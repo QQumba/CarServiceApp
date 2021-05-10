@@ -1,0 +1,99 @@
+#sidebar{
+    position: sticky;
+    top: 0;
+    width: 20%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    background-color: #11101D;
+    color: white;
+}
+
+#sidebar hr{
+    width: 85%;
+    margin: auto;
+    border: none;
+    height: 1px;
+    background-color: #3c3b50;
+}
+
+.sidebar-item-inner{
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 5px;
+}
+
+.sidebar-item:hover{
+    cursor: pointer;
+    background-color: #FFFFFF;
+    color: black;
+}
+
+.icon{
+    width: 20px;
+    display: inline;
+}
+
+.sidebar-item:hover .icon{
+    filter: invert(100%);
+}
+
+.sidebar-item img{
+    width: 20px;
+}
+
+.sidebar-header{
+    font-weight: bold;
+    color: white;
+}
+
+#logo{
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 0px 20px 0px;
+
+}
+
+#logo:hover{
+    background-color: #1e1c2c;
+    color: white;
+}
+
+.sidebar-item{
+    padding: 8px 20px 8px 20px;
+    margin: 15px;
+    border-radius: 4px;
+    transition: background-color .2s ease-in-out;
+}
+
+
+#sidebar-top{
+
+}
+#sidebar-bot{
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sidebar-bot img{
+    height: 32px;
+    padding: 8px;
+    border-radius: 16px;
+}
+
+button{
+    background-color: inherit;
+    border: none;
+    padding: 0;
+    margin: auto;
+}
+
+button:hover{
+    cursor: pointer;
+}
